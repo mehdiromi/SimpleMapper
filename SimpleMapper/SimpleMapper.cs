@@ -10,6 +10,28 @@ namespace SimpleMapper
 {
     public class SimpleMapper
     {
+
+        //Version 1: Using Generics and reflections
+        public static TDestination Map(TSource source)
+            where TDestination: class
+
+        {
+            TDestination result = Activator.CreateInstance();
+            IEnumerable props = typeof(TDestination).GetProperties();
+            foreach (var prop in props)
+            {
+                Type tProp = prop.PropertyType;
+                if (typeof(TSource).GetProperty(prop.Name) != null)
+                {
+                    prop.SetValue(result, Convert.ChangeType(source.GetType().GetProperty(prop.Name).GetValue(source), tProp), null);
+                }
+            }
+            return result;
+        }
+
+      
+    
+        //Version 2: Using system.Object
         private static void Map(object obj1, object obj2)
         {
             #region Set property values using reflections
@@ -39,34 +61,6 @@ namespace SimpleMapper
             }
             #endregion
         }
-
-
-
-        public static void InitOtherFields<T>(object obj, T defaultValue)
-        {
-            #region Set property values using reflections
-            string[] invalidPropName = { "ID", "Year", "Quarter", "StatusID", "DateCreated", "LastModified" };
-            Type type = obj.GetType();
-            PropertyInfo[] props = type.GetProperties();
-            foreach (var prop in props)
-            {
-                #region MyRegion
-                if (!invalidPropName.Contains(prop.Name))
-                {
-                    #region MyRegion
-                    Type tProp = prop.PropertyType;
-                    if (tProp.IsGenericType && tProp.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-                    {
-                        tProp = new NullableConverter(prop.PropertyType).UnderlyingType;
-                    }
-                    prop.SetValue(obj, Convert.ChangeType(defaultValue, tProp), null);
-                    #endregion
-                }
-                #endregion
-            }
-            #endregion
-        }
-
 
 
 
