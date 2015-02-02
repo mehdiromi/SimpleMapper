@@ -45,7 +45,7 @@ namespace SimpleMapper
         public static void InitOtherFields<T>(object obj, T defaultValue)
         {
             #region Set property values using reflections
-            string[] invalidPropName = { "ID", "Year", "Quarter", "DealerID", "StatusID", "DateCreated", "LastModified" };
+            string[] invalidPropName = { "ID", "Year", "Quarter", "StatusID", "DateCreated", "LastModified" };
             Type type = obj.GetType();
             PropertyInfo[] props = type.GetProperties();
             foreach (var prop in props)
